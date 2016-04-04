@@ -1,0 +1,101 @@
+#include<iostream>
+#include<conio.h>
+#include<cmath>
+#include<vector>
+
+void fillRequestsArray(int size, std::vector<int>& requests)
+{
+	for(int i = 1; i <= size; i++)
+	{
+	 	std::cin >> requests[i];
+	}
+}
+
+int shortSeekTimeFirst(std::vector<int>& requests)
+{
+	int totalMovement = 0;
+	int shortDistance;
+	int shortDistanceIndex = 0;
+	int temporaryVariable;
+	int movement;
+	
+	for(int i = 0; i < requests.size(); i++)
+	{
+		shortDistance = 1000;
+		
+		for(int j = i+1; j <= requests.size(); j++)
+		{
+			movement = std::abs(requests[i] - requests[j]);			
+			if(movement < shortDistance)
+			{
+				shortDistance = movement;
+				shortDistanceIndex = j;
+			}
+		}
+			
+		totalMovement += shortDistance;
+		temporaryVariable = requests[i+1];
+		requests[i+1] = requests[shortDistanceIndex];
+		requests[shortDistanceIndex] = temporaryVariable;
+	}
+	
+	return(totalMovement);
+}
+
+int firstComeFirstService(std::vector<int>& requests)
+{
+	int movement = 0;
+	for(int i = 1; i < requests.size(); i++)
+	{
+		movement += std::abs(requests[i-1] - requests[i]);
+    }
+    return(movement);
+}
+
+void outputProcessedRequests(std::vector<int>& requests)
+{
+	
+	for(int i = 0; i < requests.size(); i++)
+	{
+		std::cout << requests[i] << "  ";
+	}
+	std::cout << std::endl;
+}
+int main(int argc, char *argv[])
+{
+	std::string algorithm = argv[1];
+	
+	int totalMovement;
+	int requestsNumber;
+	
+	std::cout << "Enter the number of requests:";
+	std::cin >> requestsNumber;
+	
+	std::vector<int> requests(requestsNumber+1);  
+	
+	std::cout << "Enter the initial state:";
+	std::cin >> requests[0];
+	
+	std::cout << "Enter the process in requests order: ";
+	fillRequestsArray(requestsNumber, requests);
+	
+	if(algorithm =="SSTF")
+	{
+		totalMovement = shortSeekTimeFirst(requests);
+	}
+	else if(algorithm == "FCFS")
+	{
+		totalMovement = firstComeFirstService(requests);
+	}
+	else
+	{
+		std::cout << "Enter SSTF or FCFS";
+		return 0;
+	}
+	std::cout << "processing of requests:";
+    outputProcessedRequests(requests);    
+	
+	std::cout << "head movement = " << totalMovement;
+    getch();
+    return 0;
+}
